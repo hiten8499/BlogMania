@@ -9,10 +9,10 @@ const Footer = () => {
 
         <div>
             <img src={assets.logo} alt="logo" className='w-32 sm:w-44' />
-            <p className='max-w-[410px] mt-6'>Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                Necessitatibus vel libero recusandae fugiat dolorum inventore tenetur itaque ipsa!
-                 Sequi, omnis similique? Praesentium expedita architecto, 
-                 eum dolores non aspernatur iusto vel!</p>
+            <p className='max-w-[410px] mt-6'> BlogMania-HOH is your go-to destination for insightful articles,
+                 tutorials, and industry updates across tech, lifestyle, and more. 
+                 We’re passionate about delivering valuable content to curious minds around the world. 
+                 Stay connected, stay inspired.</p>
         </div>
         <div className='flex flex-wrap justify-between w-full md:w-[45%] gap-5'>
             {footer_data.map((section,index)=> 
@@ -21,7 +21,7 @@ const Footer = () => {
                 <ul className='text-sm space-y-1'>
                     {section.links.map((link,i)=>
                      <li key={i}>
-                        <a href="#" className='hover:underline transition'>{link}</a>
+                        <a href="#" className='hover:underline tran'>{link}</a>
                      </li>
                     )}
                 </ul>
