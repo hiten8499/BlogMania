@@ -15,6 +15,7 @@ const Home = () => {
       <BlogCard/>
       <Newsletter/>
       <Footer/>
+      
     </>
   )
 }
