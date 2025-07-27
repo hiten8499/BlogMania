@@ -1,6 +1,7 @@
 import fs from 'fs'
 import imagekit from '../configs/imageKit.js';
 import Blog from '../models/Blogs.js';
+import { getActiveResourcesInfo } from 'process';
 export const addBLog= async (req,res) => {
     try {
         const {title,subTitle,description,category,isPublished}= 
@@ -37,3 +38,52 @@ export const addBLog= async (req,res) => {
         res.json({success:false,message:error.message})
     }
 }
+
+export const  getAllBlogs =async (req,res) => {
+
+    try {
+        console.log("All blog called");
+        const blog=await Blog.find({isPublished:true})
+        res.json({success:true,blog})
+    } catch (error) {
+        res.json({success:false,message:error.message})
+    }
+    
+}
+
+export const getBlogById= async (req,res) => {
+    try {
+        const {blogid}  =req.params;
+        const blog=await Blog.findById(blogid)
+        if(!blog ){
+            return res.json({success:false,message:"Blog Not Found"})
+        }
+        res.json({success:true,blog})
+     } catch (error) {
+         res.json({success:false,message:error.message})
+    }
+}
+
+export const deleteBlogById= async (req,res) => {
+    try {
+        const {Id}  =req.body;
+        await Blog.findByIdAndDelete(Id)
+        return res.json({success:true,message:"Blog Deleted Successfully"})
+     } catch (error) {
+         res.json({success:false,message:error.message})
+    }
+}
+
+export const togglePublished=async (req,res) => {
+    try {
+        const {id}=req.body;
+        const blog=await Blog.findById(id);
+        blog.isPublished=!blog.isPublished;
+        await blog.save();
+         return res.json({success:true,message:"Blog status Updated"})
+    } catch (error) {
+        res.json({success:false,message:error.message})
+    }
+}
+
+
