@@ -7,7 +7,7 @@ const commentSchema= new mongoose.Schema({
     name:{type:String,required:true},
     content:{type:String,required:true},
     isApproved:{type:Boolean,default:false}
-} ,{timestamp:true});
+} ,{timestamps:true});
 
 const Comment=mongoose.model('Comment',commentSchema);
 

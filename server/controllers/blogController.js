@@ -3,6 +3,7 @@ import imagekit from '../configs/imageKit.js';
 import Blog from '../models/Blogs.js';
 import { getActiveResourcesInfo } from 'process';
 import Comment from '../models/Comment.js';
+import main from '../configs/gemini.js';
 
 export const addBLog = async (req, res) => {
   try {
@@ -68,17 +69,18 @@ export const getBlogById = async (req, res) => {
 
 export const deleteBlogById = async (req, res) => {
   try {
-    const { Id } = req.body;
-    await Blog.findByIdAndDelete(Id);
+    const { id } = req.body;  
+    await Blog.findByIdAndDelete(id);
 
-    // If blog gets deleted, delete comments too
-    await Comment.deleteMany({ blog: Id });
+    // Also delete related comments
+    await Comment.deleteMany({ blog: id });
 
     return res.json({ success: true, message: "Blog Deleted Successfully" });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 export const togglePublished = async (req, res) => {
   try {
@@ -106,8 +108,22 @@ export const getBlogComments = async (req, res) => {
   try {
     const { blogId } = req.body;
     const comments = await Comment.find({ blog: blogId, isApproved: true }).sort({ createdAt: -1 });
-    res.json({ success: true, message: comments });
+    
+    res.json({ success: true, comment: comments }); // ✅ Changed from message → comment
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
+
+export const generateContent =async (req,res) => {
+  try {
+
+    const{prompt} =req.body;
+   const content= await main(prompt + 
+    ' Generate a blog content for this topic in simple text format ')
+    res.json({success:true,content})
+  } catch (error) {
+    res.json({success:false,message:error.message})
+  }
+}
+
