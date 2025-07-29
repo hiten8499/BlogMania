@@ -5,24 +5,56 @@ import Navbar from '../components/Navbar';
 import Moment from 'moment'
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
+import { useAppContext } from '../context/AppContext';
+import toast from 'react-hot-toast';
 const Blog = () => {
   const {id}=useParams()
+
+  const {axios} =useAppContext()
 
   const[data,setData]=useState(null)
   const[comment,setComments]=useState([])
   const[name,setName]=useState('')
   const[content,setContent]=useState('')
+
   const fetchBlogData=async () => {
-   const data= blog_data.find(item=>item._id===id)
-    setData(data)
+     try {
+      const {data}=await axios.get(`/api/blog/${id}`)
+      data.success ? setData(data.blog) :toast.error(data.message)
+     } catch (error) {
+      toast.error(error.message)
+     }
   }
   
-   const fetchComments=async () => {
-     setComments(comments_data)
-   }
+  const fetchComments = async () => {
+  try {
+    const { data } = await axios.post('/api/blog/comments', { blogId: id });
+
+    if (data.success && Array.isArray(data.comment)) {
+      setComments(data.comment);
+    } else {
+      setComments([]); // Fallback if API doesn't return an array
+     // toast.error(data.message || "No comments found");
+    }
+  } catch (error) {
+    //setComments([]); // fallback to prevent undefined
+   // toast.error(error.message || "Failed to load comments");
+  }
+};
 
    const addComment= async (e) => {
     e.preventDefault();
+        try {
+          const {data}= await axios.post('/api/blog/add-comment',{blog:id,name,content});
+          if (data.success) {
+            toast.success(data.message)
+            setName('')
+            setContent('')
+          }
+          else{ toast.error(data.message); }
+        } catch (error) {
+          toast.error(error.message);
+        }
    }
 
   useEffect(()=>{
@@ -49,7 +81,7 @@ const Blog = () => {
 
              {/* Comment Section */}
              <div className='mt-14 mb-10 max-w-3xl mx-auto'>
-              <p className='font-semibold mb-4'>Comments ({comment.length})</p>
+              <p className='font-semibold mb-4'>Comments ({comment?.length || 0})</p>
                <div className='flex flex-col gap-4'>
                  {comment.map((item,index)=>(
 
