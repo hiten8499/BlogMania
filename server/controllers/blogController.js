@@ -2,6 +2,7 @@ import fs from 'fs'
 import imagekit from '../configs/imageKit.js';
 import Blog from '../models/Blogs.js';
 import { getActiveResourcesInfo } from 'process';
+import Comment from '../models/Comment.js';
 export const addBLog= async (req,res) => {
     try {
         const {title,subTitle,description,category,isPublished}= 
@@ -68,6 +69,10 @@ export const deleteBlogById= async (req,res) => {
     try {
         const {Id}  =req.body;
         await Blog.findByIdAndDelete(Id)
+
+        //If Blog get deleted comments also sholud be Deleted
+        await Comment.deleteMany({blog:Id});
+        
         return res.json({success:true,message:"Blog Deleted Successfully"})
      } catch (error) {
          res.json({success:false,message:error.message})
@@ -86,4 +91,22 @@ export const togglePublished=async (req,res) => {
     }
 }
 
+export const addComment=async (req,res) => {
+try {
+    const {blog,name,content} =req.body;
+    await  Comment.create({blog,name,content});
+    res.json({success:true,message:'Comment Added for Review'})
+} catch (error) {
+     res.json({success:false,message:error.message})
+}    
+}
 
+export const getBlogComments=async (req,res) => {
+    try {
+        const {blogId} =req.body;
+        const comments=await Comment.find({blog:blogId,isApproved:true}).sort({createdAt:-1});
+        res.json({success:true,message:comments})
+    } catch (error) {
+     res.json({success:false,message:error.message})
+} 
+}
