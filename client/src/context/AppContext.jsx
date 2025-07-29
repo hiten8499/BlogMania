@@ -7,7 +7,7 @@ const AppContext = createContext()
 
 axios.defaults.baseURL= import.meta.env.VITE_BACKEND_URL;
 
-export const AppProvider=({children})=>{
+export const AppProvider=({ children })=>{
 
     const navigate =useNavigate()
 
@@ -15,21 +15,25 @@ export const AppProvider=({children})=>{
     const [blogs,setBlogs]=useState([])
      const [input,setInput]=useState("")
 
-    const fetchBlogs= async () => {
-        try {
-            const {data} =await axios.get('/api/blog/all');
-            data.success ? setBlogs(data.blogs) : toast.error(data.message)
-        } catch (error) {
-            toast.error(error.message)
-        }
-    }
+    const fetchBlogs = async () => {
+  try {
+    const { data } = await axios.get('/api/blog/all');
+    //console.log("📦 API response:", data); // ✅ Log the response for debugging
+    data.success && Array.isArray(data.blogs)
+      ? setBlogs(data.blogs)
+      : toast.error(data.message || "Invalid blog data");
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
+
 
     useEffect(()=>{
             fetchBlogs();
             const token=localStorage.getItem('token')
             if (token) {
                 setToken(token)
-                axios.defaults.headers.common['Authorizaion']=`${token}`;
+                axios.defaults.headers.common['Authorization']=`${token}`;
             }
     },[])
     const value={
@@ -38,10 +42,10 @@ export const AppProvider=({children})=>{
     return (
         
         <AppContext.Provider value={value}>
-            {children}
+            { children }
             </AppContext.Provider>
     )
 }
 export const useAppContext= ()=>{
     return useContext(AppContext)
-}
+};
