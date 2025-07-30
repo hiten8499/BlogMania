@@ -54,7 +54,7 @@ export const addBLog = async (req, res) => {
           }
         });
 
-        const blogUrl = `/${newBlog._id}`;
+        const blogUrl = `https://blogmania-backend.onrender.com/${newBlog._id}`;
 
         const mailOptions = {
           from: 'purohithiten49@gmail.com',
