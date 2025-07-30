@@ -4,6 +4,10 @@ import Blog from '../models/Blogs.js';
 import { getActiveResourcesInfo } from 'process';
 import Comment from '../models/Comment.js';
 import main from '../configs/gemini.js';
+import nodemailer from 'nodemailer';
+import { format } from 'path';
+import Subscribe from '../models/Subscribe.js';
+import { subscribe } from 'diagnostics_channel';
 
 export const addBLog = async (req, res) => {
   try {
@@ -34,7 +38,43 @@ export const addBLog = async (req, res) => {
     });
 
     const image = optimizedUrl;
-    await Blog.create({ title, subTitle, description, category, image, isPublished });
+
+    // Save blog to DB
+    const newBlog = await Blog.create({ title, subTitle, description, category, image, isPublished });
+
+    // Notify subscribers via email (only after blog is saved)
+    try {
+      const subscribers = await Subscribe.find({});
+      if (subscribers.length > 0) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: MAIL_USERNAME,
+            pass: MAIL_PASSWORD
+          }
+        });
+
+        const blogUrl = `https://blog-mania-umber.vercel.app/blog/${newBlog._id}`;
+
+        const mailOptions = {
+          from: 'purohithiten49@gmail.com',
+          to: subscribers.map(s => s.email),
+          subject: `New Blog Published: ${title}`,
+          html: `
+            <h2>${title}</h2>
+            <p>${subTitle}</p>
+            <p><a href="${blogUrl}">Click here to read the blog</a></p>
+            <br/>
+            <p>Thanks for subscribing to BlogMania!</p>
+          `
+        };
+
+        await transporter.sendMail(mailOptions);
+      }
+    } catch (mailError) {
+      console.error("Mail sending failed:", mailError.message);
+      // Don't block blog creation on mail failure
+    }
 
     res.json({ success: true, message: "Blog Added Successfully" });
 
@@ -42,6 +82,7 @@ export const addBLog = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 export const getAllBlogs = async (req, res) => {
   try {
@@ -125,5 +166,41 @@ export const generateContent =async (req,res) => {
   } catch (error) {
     res.json({success:false,message:error.message})
   }
+}
+
+export const  handleSubscribe=async (req,res) => {
+  const {email}=req.body;
+  
+  if(!email) return res.json({success:false,message:'Email is Required'});
+    try {
+      const alreadyExist=await Subscribe.findOne({email});
+      if (alreadyExist) {
+        return res.json({success:false,message:"Email Already Subscribed"})
+      }
+      await Subscribe.create({email});
+        const transporter= nodemailer.createTransport({
+
+          service:'gmail',
+          auth:{
+            user:'purohithiten49@gmail.com',
+            pass:'kmduawzfyvakdyvi'
+          }
+        });
+        const mail={
+          from:'purohithiten49@gmail.com',
+          to:email,
+          subject:'Thanks for Subscribing ! ',
+          html:`
+           <h2> Welcome to BlogMania! </h2>
+           <p> Thanks for Subsribing. We will notify you about new content !</p>
+             <p> Stay Tuned </p>
+          `
+        };
+        await transporter.sendMail(mail);
+        return res.json({success:false,message:' Subscription Successful. Email Sent.'})
+    } catch (error) {
+         console.log(error)
+        return res.json({success:false,message:'Something Went Wrong '})
+    }
 }
 

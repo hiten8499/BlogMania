@@ -12,6 +12,7 @@ import 'quill/dist/quill.snow.css'
 import { Toaster } from 'react-hot-toast'
 import { useAppContext } from './context/AppContext'
 import Layout from './pages/admin/Layout'
+import Subscriber from './pages/admin/Subscriber'
 
 const App = () => {
 
@@ -28,6 +29,7 @@ const App = () => {
           <Route path='addBlog' element={<AddBlog/>} />
           <Route path='listBlog' element={<ListBlog/>} />  
           <Route path='comments' element={<Comments/>} />
+          <Route path='subscribers' element={<Subscriber/> } />
 
         </Route>
       </Routes>

@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken'
 import Blog from '../models/Blogs.js';
 import Comment from '../models/Comment.js';
+import Subscribe from '../models/Subscribe.js';
 
 export const adminLogin=async (req,res) => {
     try {
@@ -86,3 +87,24 @@ export const approveById = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
+export const getAllSubscribers = async (req, res) => {
+  try {
+    const subscribers = await Subscribe.find().sort({ createdAt: -1 });
+    res.json({success: true,subscribers});
+  } 
+  catch (error) {
+    res.json({success: false,message: error.message});
+  }
+};
+
+// export const deleteSubscriber = async (req, res) => {
+//   try {
+//     const { id } = req.body;
+//     await Subscribe.findByIdAndDelete(id);
+//     res.json({ success: true, message: "Subscriber deleted successfully" });
+//   } catch (error) {
+//     res.json({ success: false, message: error.message });
+//   }
+// };
+
