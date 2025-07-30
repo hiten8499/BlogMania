@@ -54,7 +54,7 @@ export const addBLog = async (req, res) => {
           }
         });
 
-        const blogUrl = `https://blog-mania-umber.vercel.app/blog/${newBlog._id}`;
+        const blogUrl = `/${newBlog._id}`;
 
         const mailOptions = {
           from: 'purohithiten49@gmail.com',
