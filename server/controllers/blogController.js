@@ -182,8 +182,8 @@ export const  handleSubscribe=async (req,res) => {
 
           service:'gmail',
           auth:{
-            user:'purohithiten49@gmail.com',
-            pass:'kmduawzfyvakdyvi'
+            user:process.env.MAIL_USERNAME,
+            pass:process.env.MAIL_PASSWORD
           }
         });
         const mail={
@@ -197,7 +197,7 @@ export const  handleSubscribe=async (req,res) => {
           `
         };
         await transporter.sendMail(mail);
-        return res.json({success:false,message:' Subscription Successful. Email Sent.'})
+       return res.json({ success: true, message: 'Subscription Successful. Email Sent.' });
     } catch (error) {
          console.log(error)
         return res.json({success:false,message:'Something Went Wrong '})
