@@ -1,5 +1,5 @@
 import express from 'express'
-import { adminLogin, approveById , deleteCommentById, deleteSubscriber, getAllBlogsAdmin, getAllComments, getAllSubscribers, getDashboard } from '../controllers/adminController.js';
+import { adminLogin, approveById , deleteCommentById, getAllBlogsAdmin, getAllComments, getAllSubscribers, getDashboard } from '../controllers/adminController.js';
 import auth from '../middleware/auth.js';
 const adminRouter=express.Router();
 
