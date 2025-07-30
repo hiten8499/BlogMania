@@ -1,14 +1,15 @@
 import fs from 'fs';
+import dotenv from 'dotenv';
+dotenv.config();
+
 import imagekit from '../configs/imageKit.js';
 import Blog from '../models/Blogs.js';
-import { getActiveResourcesInfo } from 'process';
 import Comment from '../models/Comment.js';
 import main from '../configs/gemini.js';
 import nodemailer from 'nodemailer';
-import { format } from 'path';
 import Subscribe from '../models/Subscribe.js';
-import { subscribe } from 'diagnostics_channel';
 
+// ========== ADD BLOG ==========
 export const addBLog = async (req, res) => {
   try {
     const { title, subTitle, description, category, isPublished } = JSON.parse(req.body.blog);
@@ -20,14 +21,12 @@ export const addBLog = async (req, res) => {
 
     const fileBuffer = fs.readFileSync(imageFile.path);
 
-    // Upload Image to Imagekit
     const response = await imagekit.upload({
       file: fileBuffer,
       fileName: imageFile.originalname,
       folder: "/blogs"
     });
 
-    // Optimization through ImageKit URL transformation
     const optimizedUrl = imagekit.url({
       path: response.filePath,
       transformation: [
@@ -39,62 +38,62 @@ export const addBLog = async (req, res) => {
 
     const image = optimizedUrl;
 
-    // Save blog to DB
     const newBlog = await Blog.create({ title, subTitle, description, category, image, isPublished });
 
-    // Notify subscribers via email (only after blog is saved)
+    // ===== Send Email to Subscribers =====
     try {
       const subscribers = await Subscribe.find({});
+      console.log("Subscribers found:", subscribers.length);
+
       if (subscribers.length > 0) {
         const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: MAIL_USERNAME,
-            pass: MAIL_PASSWORD
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD
           }
         });
 
-        const blogUrl = `https://blogmania-backend.onrender.com/${newBlog._id}`;
+        const blogUrl = `https://blog-mania-pi.vercel.app/${newBlog._id}`; 
 
         const mailOptions = {
-          from: 'purohithiten49@gmail.com',
+          from: `"BlogMania" <${process.env.MAIL_USERNAME}>`,
           to: subscribers.map(s => s.email),
           subject: `New Blog Published: ${title}`,
           html: `
             <h2>${title}</h2>
             <p>${subTitle}</p>
-            <p><a href="${blogUrl}">Click here to read the blog</a></p>
+            <p><a href="${blogUrl}">Click here to read the full blog</a></p>
             <br/>
-            <p>Thanks for subscribing to BlogMania!</p>
+            <p>Thanks for subscribing to <strong>BlogMania</strong>!</p>
           `
         };
 
         await transporter.sendMail(mailOptions);
+        console.log("Notification emails sent to subscribers.");
       }
     } catch (mailError) {
       console.error("Mail sending failed:", mailError.message);
-      // Don't block blog creation on mail failure
     }
 
     res.json({ success: true, message: "Blog Added Successfully" });
-
   } catch (error) {
+    console.error(error);
     res.json({ success: false, message: error.message });
   }
 };
 
-
+// ========== GET ALL BLOGS ==========
 export const getAllBlogs = async (req, res) => {
   try {
-    console.log("All blog called");
-    const blog = await Blog.find({ isPublished: true }); 
+    const blog = await Blog.find({ isPublished: true });
     res.json({ success: true, blogs: blog });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
 
-
+// ========== GET BLOG BY ID ==========
 export const getBlogById = async (req, res) => {
   try {
     const { blogid } = req.params;
@@ -108,12 +107,11 @@ export const getBlogById = async (req, res) => {
   }
 };
 
+// ========== DELETE BLOG BY ID ==========
 export const deleteBlogById = async (req, res) => {
   try {
-    const { id } = req.body;  
+    const { id } = req.body;
     await Blog.findByIdAndDelete(id);
-
-    // Also delete related comments
     await Comment.deleteMany({ blog: id });
 
     return res.json({ success: true, message: "Blog Deleted Successfully" });
@@ -122,7 +120,7 @@ export const deleteBlogById = async (req, res) => {
   }
 };
 
-
+// ========== TOGGLE PUBLISHED ==========
 export const togglePublished = async (req, res) => {
   try {
     const { id } = req.body;
@@ -135,6 +133,7 @@ export const togglePublished = async (req, res) => {
   }
 };
 
+// ========== ADD COMMENT ==========
 export const addComment = async (req, res) => {
   try {
     const { blog, name, content } = req.body;
@@ -145,62 +144,69 @@ export const addComment = async (req, res) => {
   }
 };
 
+// ========== GET COMMENTS ==========
 export const getBlogComments = async (req, res) => {
   try {
     const { blogId } = req.body;
     const comments = await Comment.find({ blog: blogId, isApproved: true }).sort({ createdAt: -1 });
-    
-    res.json({ success: true, comment: comments }); // ✅ Changed from message → comment
+
+    res.json({ success: true, comment: comments });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
 
-export const generateContent =async (req,res) => {
+// ========== GENERATE BLOG CONTENT ==========
+export const generateContent = async (req, res) => {
   try {
-
-    const{prompt} =req.body;
-   const content= await main(prompt + 
-    ' Generate a blog content for this topic in simple text format ')
-    res.json({success:true,content})
+    const { prompt } = req.body;
+    const content = await main(prompt + ' Generate a blog content for this topic in simple text format ');
+    res.json({ success: true, content });
   } catch (error) {
-    res.json({success:false,message:error.message})
+    res.json({ success: false, message: error.message });
   }
-}
+};
 
-export const  handleSubscribe=async (req,res) => {
-  const {email}=req.body;
-  
-  if(!email) return res.json({success:false,message:'Email is Required'});
-    try {
-      const alreadyExist=await Subscribe.findOne({email});
-      if (alreadyExist) {
-        return res.json({success:false,message:"Email Already Subscribed"})
-      }
-      await Subscribe.create({email});
-        const transporter= nodemailer.createTransport({
+// ========== HANDLE SUBSCRIBE ==========
+export const handleSubscribe = async (req, res) => {
+  const { email } = req.body;
 
-          service:'gmail',
-          auth:{
-            user:process.env.MAIL_USERNAME,
-            pass:process.env.MAIL_PASSWORD
-          }
-        });
-        const mail={
-          from:'purohithiten49@gmail.com',
-          to:email,
-          subject:'Thanks for Subscribing ! ',
-          html:`
-           <h2> Welcome to BlogMania! </h2>
-           <p> Thanks for Subsribing. We will notify you about new content !</p>
-             <p> Stay Tuned </p>
-          `
-        };
-        await transporter.sendMail(mail);
-       return res.json({ success: true, message: 'Subscription Successful. Email Sent.' });
-    } catch (error) {
-         console.log(error)
-        return res.json({success:false,message:'Something Went Wrong '})
+  if (!email) return res.json({ success: false, message: 'Email is Required' });
+
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if (!isValidEmail) return res.json({ success: false, message: 'Invalid Email Format' });
+
+  try {
+    const alreadyExist = await Subscribe.findOne({ email });
+    if (alreadyExist) {
+      return res.json({ success: false, message: "Email Already Subscribed" });
     }
-}
 
+    await Subscribe.create({ email });
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD
+      }
+    });
+
+    const mail = {
+      from: `"BlogMania" <${process.env.MAIL_USERNAME}>`,
+      to: email,
+      subject: 'Thanks for Subscribing!',
+      html: `
+        <h2>Welcome to BlogMania!</h2>
+        <p>Thanks for subscribing. We will notify you about new content!</p>
+        <p>Stay tuned 🚀</p>
+      `
+    };
+
+    await transporter.sendMail(mail);
+    return res.json({ success: true, message: 'Subscription Successful. Email Sent.' });
+  } catch (error) {
+    console.error(error);
+    return res.json({ success: false, message: 'Something Went Wrong' });
+  }
+};
