@@ -1,38 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-*{
-  font-family: "Outfit", sans-serif;
+* {
+  font-family: "IBM Plex Sans", sans-serif;
+  scroll-behavior: smooth;
 }
-::-webkit-scrollbar{
+
+::-webkit-scrollbar {
   display: none;
 }
-@theme{
-  --color-primary: #5044E5;
+
+/* Dark theme color palette */
+:root {
+  --color-primary: #E50914;  /* Techno red */
+  --color-base: #f3f4f6;     /* Light text on dark */
+  --color-accent: #1D4ED8;   /* Accent blue */
+  --color-bg: #0f0f0f;       /* Ultra dark background */
 }
 
-.rich-text { font-size: 15px;  }
+body {
+  background-color: var(--color-bg);
+  color: var(--color-base);
+}
 
-.rich-text p { margin-bottom: 16px; color: #292929; }
+/* Rich blog content styling */
+.rich-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--color-base);
+  font-family: "IBM Plex Sans", sans-serif;
+}
 
-.rich-text h1 { font-size: 36px; font-weight: 700; color: #252525 !important; margin: 32px 0; }
+.rich-text p {
+  margin-bottom: 1rem;
+}
 
-.rich-text h2 { font-size: 22px; font-weight: 700; color: #252525 !important; margin: 24px 0; }
+.rich-text h1 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  margin: 2rem 0 1rem;
+  color: var(--color-base);
+}
 
-.rich-text h3 { font-size: 18px; font-weight: 600; color: #333333 !important; margin: 20px 0; }
+.rich-text h2 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.75rem;
+  margin: 1.5rem 0 1rem;
+}
 
-.rich-text h4 { font-size: 16px; font-weight: 500; color: #444444 !important; margin: 16px 0; }
+.rich-text h3,
+.rich-text h4,
+.rich-text h5,
+.rich-text h6 {
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
 
-.rich-text h5 { font-size: 14px; font-weight: 400; color: #555555 !important; margin: 12px 0; }
+.rich-text a {
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
 
-.rich-text h6 { font-size: 12px; font-weight: 400; color: #666666 !important; margin: 8px 0; }
+.rich-text a:hover {
+  color: var(--color-accent);
+}
 
-.rich-text strong { font-weight: 700; }
+.rich-text ol,
+.rich-text ul {
+  margin-left: 1.5rem;
+  padding-left: 1rem;
+}
 
-.rich-text ol { margin-left: 30px; list-style-type: decimal; }
-
-.rich-text ul { margin-left: 30px; list-style-type: disc; }
-
-.rich-text li { margin-bottom: 8px; }
-
-.rich-text a { color: #007AFF }
+.rich-text li {
+  margin-bottom: 0.5rem;
+  list-style-position: outside;
+}
+  
