@@ -15,7 +15,7 @@ const Navbar = () => {
       />
 
       <button
-        // onClick={() => navigate('/admin')}
+         onClick={() => navigate('/admin')}
         className="flex items-center gap-2 bg-red-600 text-white px-6 py-2.5 rounded-full text-sm tracking-wide font-semibold hover:bg-red-700 transition"
       >
         {token ? 'Dashboard' : 'Admin Login'}
