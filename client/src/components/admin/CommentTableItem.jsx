@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 const CommentTableItem = ({ comments, fetchComments }) => {
   const { blog, createdAt, _id, name, content, isApproved } = comments;
-  const BlogDate = new Date(createdAt);
+  const commentDate = new Date(createdAt);
   const { axios } = useAppContext();
 
   const approveComment = async () => {
@@ -14,6 +14,8 @@ const CommentTableItem = ({ comments, fetchComments }) => {
       if (data.success) {
         toast.success(data.message);
         fetchComments();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
@@ -21,14 +23,14 @@ const CommentTableItem = ({ comments, fetchComments }) => {
   };
 
   const deleteComment = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this comment?");
-    if (!confirmDelete) return;
-
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
     try {
       const { data } = await axios.post('/api/admin/delete-comment', { id: _id });
       if (data.success) {
         toast.success(data.message);
         fetchComments();
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
@@ -36,36 +38,41 @@ const CommentTableItem = ({ comments, fetchComments }) => {
   };
 
   return (
-    <tr className='border-y border-gray-300'>
-      <td className='px-6 py-4'>
-        <p><b className='font-medium text-gray-600'>Blog:</b> {blog?.title || "Unknown"}</p>
-        <p><b className='font-medium text-gray-600'>Name:</b> {name}</p>
-        <p><b className='font-medium text-gray-600'>Comment:</b> {content}</p>
+    <tr className="border-t border-gray-700/50 hover:bg-white/5 transition-colors">
+      {/* Comment Info */}
+      <td className="px-4 py-3 text-left text-[var(--color-base)]">
+        <p><b className="text-gray-400">Blog:</b> {blog?.title || 'Unknown'}</p>
+        <p><b className="text-gray-400">Name:</b> {name}</p>
+        <p><b className="text-gray-400">Comment:</b> {content}</p>
       </td>
-      <td className='px-6 py-4 max-sm:hidden'>
-        {BlogDate.toLocaleDateString()}
+
+      {/* Date */}
+      <td className="px-4 py-3 text-left text-gray-400 max-sm:hidden">
+        {commentDate.toLocaleDateString()}
       </td>
-      <td className='px-6 py-4'>
-        <div className='inline-flex items-center gap-4'>
+
+      {/* Actions */}
+      <td className="px-4 py-3 text-left">
+        <div className="flex items-center gap-4">
           {!isApproved ? (
             <button
               onClick={approveComment}
               aria-label="Approve Comment"
-              className='hover:scale-110 transition-all'
+              className="border border-gray-700/50 px-3 py-1 rounded text-[var(--color-base)] hover:bg-white/5 transition"
             >
-              <img src={assets.tick_icon} alt="Approve" className='w-5' />
+              Approve
             </button>
           ) : (
-            <p className='text-xs border border-green-600 bg-green-100 text-green-600 rounded-full px-3 py-1'>
+            <p className="px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-400">
               Approved
             </p>
           )}
           <button
             onClick={deleteComment}
             aria-label="Delete Comment"
-            className='hover:scale-110 transition-all'
+            className="hover:scale-110 transition-transform"
           >
-            <img src={assets.bin_icon} alt="Delete" className='w-5' />
+            <img src={assets.bin_icon} alt="Delete" className="w-5 h-5" />
           </button>
         </div>
       </td>

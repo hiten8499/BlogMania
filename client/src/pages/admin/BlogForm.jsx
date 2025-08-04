@@ -16,7 +16,7 @@ const BlogForm = ({ onPostAdded }) => {
       const { data } = await axios.post('/api/admin/generate', { topic });
       setTitle(data.title);
       setContent(data.content);
-    } catch (err) {
+    } catch {
       alert('Failed to generate content');
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ const BlogForm = ({ onPostAdded }) => {
       setTitle('');
       setContent('');
       setImage(null);
-    } catch (err) {
+    } catch {
       alert('Failed to post blog');
     } finally {
       setLoading(false);
@@ -61,48 +61,63 @@ const BlogForm = ({ onPostAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-6">
-      <h2 className="text-xl font-semibold mb-4">Create Blog with AI</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-[#1a1a1a] border border-gray-700/50 p-6 rounded-lg shadow-md mb-6 text-[var(--color-base)]"
+    >
+      <h2 className="text-xl font-semibold mb-4 text-white">Create Blog with AI</h2>
+      
+      {/* Topic Input */}
       <input
         type="text"
         placeholder="Enter topic"
-        className="border p-2 w-full mb-4 rounded"
+        className="w-full mb-4 p-2 bg-transparent border-b-2 border-gray-700 outline-none focus:border-[var(--color-primary)] text-white placeholder-gray-500"
         value={topic}
         onChange={(e) => setTopic(e.target.value)}
       />
+
+      {/* Generate Button */}
       <button
         type="button"
         onClick={handleGenerate}
-        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mb-4"
+        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition mb-4"
         disabled={loading}
       >
         {loading ? 'Generating...' : 'Generate with AI'}
       </button>
+
+      {/* Title Input */}
       <input
         type="text"
         placeholder="Title"
-        className="border p-2 w-full mb-4 rounded"
+        className="w-full mb-4 p-2 bg-transparent border-b-2 border-gray-700 outline-none focus:border-[var(--color-primary)] text-white placeholder-gray-500"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
       />
+
+      {/* Content Textarea */}
       <textarea
         placeholder="Content"
-        className="border p-2 w-full mb-4 rounded"
+        className="w-full mb-4 p-2 bg-transparent border border-gray-700 rounded outline-none focus:border-[var(--color-primary)] text-white placeholder-gray-500"
         rows={6}
         value={content}
         onChange={(e) => setContent(e.target.value)}
         required
       />
+
+      {/* Image Upload */}
       <input
         type="file"
         onChange={(e) => setImage(e.target.files[0])}
-        className="mb-4"
+        className="mb-4 text-gray-400"
         accept="image/*"
       />
+
+      {/* Submit Button */}
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-[var(--color-primary)] hover:bg-red-700 text-white px-4 py-2 rounded transition"
         disabled={loading}
       >
         {loading ? 'Posting...' : 'Post Blog'}

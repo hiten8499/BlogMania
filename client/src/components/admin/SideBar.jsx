@@ -12,7 +12,7 @@ const menuItems = [
 
 const SideBar = () => {
   return (
-    <div className="flex flex-col border-r border-gray-200 min-h-full pt-6 bg-white">
+    <div className="flex flex-col border-r border-gray-700 min-h-full pt-6 bg-[var(--color-bg)] text-[var(--color-base)]">
       {menuItems.map(({ to, icon, label }) => (
         <NavLink
           key={to}
@@ -20,7 +20,9 @@ const SideBar = () => {
           end={to === '/admin'}
           className={({ isActive }) =>
             `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-64 cursor-pointer transition 
-            ${isActive ? 'bg-primary/10 border-r-4 border-primary' : ''}`
+            ${isActive 
+              ? 'bg-[var(--color-primary)]/20 border-r-4 border-[var(--color-primary)] text-[var(--color-primary)]' 
+              : 'hover:bg-white/5'}`
           }
         >
           <img src={icon} alt={`${label} icon`} className="w-5 min-w-5" />

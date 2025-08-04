@@ -9,9 +9,7 @@ const BlogTableItem = ({ blog, fetchBlogs, index }) => {
   const { axios } = useAppContext();
 
   const deleteBlog = async () => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this blog?');
-    if (!confirmDelete) return;
-
+    if (!window.confirm('Are you sure you want to delete this blog?')) return;
     try {
       const { data } = await axios.post('/api/blog/delete', { id: _id });
       data.success ? toast.success(data.message) : toast.error(data.message);
@@ -32,28 +30,35 @@ const BlogTableItem = ({ blog, fetchBlogs, index }) => {
   };
 
   return (
-    <tr className="border-y border-gray-300">
-      <th className="px-2 py-4 text-left">{index}</th>
-      <td className="px-2 py-4">{title}</td>
-      <td className="px-2 py-4 max-sm:hidden">{blogDate.toLocaleDateString()}</td>
-      <td className="px-2 py-4 max-sm:hidden">
-        <span className={isPublished ? 'text-green-600' : 'text-orange-700'}>
+    <tr className="border-t border-gray-700/50 hover:bg-white/5 transition-colors">
+      <td className="px-4 py-3 text-left text-[var(--color-base)]">{index}</td>
+      <td className="px-4 py-3 text-left text-[var(--color-base)]">{title}</td>
+      <td className="px-4 py-3 text-left text-gray-400 max-sm:hidden">
+        {blogDate.toLocaleDateString()}
+      </td>
+      <td className="px-4 py-3 text-left max-sm:hidden">
+        <span
+          className={
+            isPublished
+              ? 'px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-400'
+              : 'px-2 py-1 text-xs rounded-full bg-orange-500/20 text-orange-400'
+          }
+        >
           {isPublished ? 'Published' : 'Unpublished'}
         </span>
       </td>
-      <td className="px-2 py-4 flex items-center gap-3 text-xs">
-        <button
-          onClick={togglePublish}
-          className="border px-2 py-1 rounded hover:bg-gray-100 transition"
-        >
-          {isPublished ? 'Unpublish' : 'Publish'}
-        </button>
-        <img
-          src={assets.cross_icon}
-          alt="Delete"
-          onClick={deleteBlog}
-          className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform"
-        />
+      <td className="px-4 py-3 text-left">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={togglePublish}
+            className="border border-gray-700/50 px-3 py-1 rounded text-[var(--color-base)] hover:bg-white/5 transition"
+          >
+            {isPublished ? 'Unpublish' : 'Publish'}
+          </button>
+          <button onClick={deleteBlog} className="hover:scale-110 transition-transform">
+            <img src={assets.cross_icon} alt="Delete" className="w-5 h-5" />
+          </button>
+        </div>
       </td>
     </tr>
   );

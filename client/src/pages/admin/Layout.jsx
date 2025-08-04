@@ -5,33 +5,36 @@ import SideBar from '../../components/admin/SideBar';
 import { useAppContext } from '../../context/AppContext';
 
 const Layout = () => {
-  const {axios,setToken,navigate}=useAppContext()
+  const { axios, setToken, navigate } = useAppContext();
+
   const logout = () => {
     localStorage.removeItem('token');
-    axios.defaults.headers.common['Authorization']=null;
-    setToken(null)
+    axios.defaults.headers.common['Authorization'] = null;
+    setToken(null);
     navigate('/');
   };
 
   return (
     <>
-      <div className='flex items-center justify-between py-2 h-[70px] px-4 sm:px-12 border-b border-gray-200 mt-3'>
+      {/* Top Navbar */}
+      <div className="flex items-center justify-between py-2 h-[70px] px-4 sm:px-12 border-b border-gray-800 bg-[#121212]">
         <img
           src={assets.logo}
-          className='w-32 sm:w-40 cursor-pointer'
-          alt='Logo'
+          className="w-32 sm:w-40 cursor-pointer"
+          alt="Logo"
           onClick={() => navigate('/')}
         />
         <button
-          type='button'
-          className='text-sm px-8 py-2 bg-primary text-white rounded-full cursor-pointer'
+          type="button"
+          className="text-sm px-8 py-2 bg-[var(--color-primary)] hover:bg-red-700 transition text-white rounded-full cursor-pointer"
           onClick={logout}
         >
           Logout
         </button>
       </div>
 
-      <div className='flex h-[calc(100vh-70px)]'>
+      {/* Main Content Area */}
+      <div className="flex h-[calc(100vh-70px)] bg-[var(--color-bg)] text-[var(--color-base)]">
         <SideBar />
         <Outlet />
       </div>
