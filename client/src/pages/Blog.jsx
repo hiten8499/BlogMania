@@ -152,15 +152,8 @@ const Blog = () => {
           </form>
         </div>
 
-        {/* Share Section */}
-        <div className="text-center mt-10">
-          <p className="font-semibold mb-4 text-lg">Share this Article on Social Media</p>
-          <div className="flex justify-center gap-6 flex-wrap">
-            <img src={assets.facebook_icon} alt="facebook" width={40} />
-            <img src={assets.twitter_icon} alt="twitter" width={40} />
-            <img src={assets.googleplus_icon} alt="google plus" width={40} />
-          </div>
-        </div>
+  
+       
       </div>
 
       <Footer />
