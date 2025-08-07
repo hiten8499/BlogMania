@@ -145,7 +145,7 @@ const Blog = () => {
             ></textarea>
             <button
               type="submit"
-              className="bg-primary text-white rounded py-2 px-6 hover:scale-[1.02] transition-all"
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 m-1.5 rounded transition-allx x"
             >
               Submit
             </button>
