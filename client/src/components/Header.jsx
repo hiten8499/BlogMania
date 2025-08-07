@@ -27,14 +27,15 @@ const Header = () => {
 
         {/* Main Heading */}
         <h1 className="text-3xl sm:text-5xl font-semibold leading-snug text-white">
-          Your own <span className="text-red-500">Blogging</span> <br className="hidden sm:block" />
-          Platform..
+         Welcome to  <span className="text-red-500">Blog-Admin</span><br className="hidden sm:block" />
+          Where Ideas meets Feedback.
+
         </h1>
 
         {/* Description */}
         <p className="my-6 sm:my-8 max-w-2xl mx-auto text-sm sm:text-base text-gray-400">
-          This is your space to think out loud, to share what matters, and to write
-          without filters. Whether it's one word or a thousand, your story starts right here.
+          This is the space to share, reflect, and express. Whether it's one line or a full story, 
+          words belong here..
         </p>
 
         {/* Search Form */}
