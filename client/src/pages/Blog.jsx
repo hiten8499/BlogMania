@@ -85,7 +85,7 @@ const Blog = () => {
           {data.subTitle}
         </h2>
         <p className="inline-block py-1 px-4 rounded-full mb-6 border text-sm border-primary/40 bg-primary/10 text-primary">
-          Micheal Brown
+          Hiten Purohit
         </p>
       </div>
 
