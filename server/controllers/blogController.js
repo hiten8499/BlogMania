@@ -54,7 +54,7 @@ export const addBLog = async (req, res) => {
           }
         });
 
-        const blogUrl = `https://blog-mania-pi.vercel.app/${newBlog._id}`; 
+        const blogUrl = `https://blog-admin-azure.vercel.app//${newBlog._id}`; 
 
         const mailOptions = {
           from: `"BlogMania" <${process.env.MAIL_USERNAME}>`,
@@ -65,7 +65,7 @@ export const addBLog = async (req, res) => {
             <p>${subTitle}</p>
             <p><a href="${blogUrl}">Click here to read the full blog</a></p>
             <br/>
-            <p>Thanks for subscribing to <strong>BlogMania</strong>!</p>
+            <p>Thanks for subscribing to <strong>Blog-Admin</strong>!</p>
           `
         };
 
